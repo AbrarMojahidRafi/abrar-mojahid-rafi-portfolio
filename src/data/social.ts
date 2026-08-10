@@ -1,10 +1,17 @@
-import { SocialLink } from "@/types/social";
+import type { SocialLink } from "@/types/social";
+
+import { profile } from "./profile";
 
 export const socialLinks: SocialLink[] = [
     {
         id: "1",
 
         platform: "GitHub",
+
+        /*
+         * Replace with your real
+         * GitHub profile URL.
+         */
 
         url: "https://github.com/",
 
@@ -16,6 +23,11 @@ export const socialLinks: SocialLink[] = [
 
         platform: "LinkedIn",
 
+        /*
+         * Replace with your real
+         * LinkedIn profile URL.
+         */
+
         url: "https://linkedin.com/",
 
         icon: "linkedin",
@@ -26,7 +38,7 @@ export const socialLinks: SocialLink[] = [
 
         platform: "Email",
 
-        url: "mailto:your-email@example.com",
+        url: `mailto:${profile.email}`,
 
         icon: "mail",
     },
