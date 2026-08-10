@@ -1,4 +1,4 @@
-import { Skill } from "@/types/skill";
+import type { Skill } from "@/types/skill";
 
 export const skills: Skill[] = [
     {
@@ -9,6 +9,10 @@ export const skills: Skill[] = [
         category: "Frontend",
 
         level: 95,
+
+        featured: true,
+
+        published: true,
 
         order: 1,
     },
@@ -22,6 +26,10 @@ export const skills: Skill[] = [
 
         level: 90,
 
+        featured: true,
+
+        published: true,
+
         order: 2,
     },
 
@@ -34,6 +42,25 @@ export const skills: Skill[] = [
 
         level: 85,
 
+        featured: true,
+
+        published: true,
+
         order: 3,
+    },
+    {
+        id: "4",
+
+        name: "Python",
+
+        category: "Backend",
+
+        level: 80,
+
+        featured: false,
+
+        published: true,
+
+        order: 4,
     },
 ];
