@@ -80,7 +80,7 @@ export const adminNavigationGroups = [
 
                 description: "Manage professional and academic experience.",
 
-                available: false,
+                available: true,
             },
 
             {

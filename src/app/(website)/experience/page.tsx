@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 
 import ExperienceHero from "@/components/experience/ExperienceHero";
+
 import ExperienceTimeline from "@/components/experience/ExperienceTimeline";
 
 import ContactCTA from "@/components/sections/ContactCTA";
 
-import { experience } from "@/data";
+import { getPublishedExperiences } from "@/lib/queries/experience";
 
 export const metadata: Metadata = {
     title: "Experience | Abrar Mojahid Rafi",
@@ -14,10 +15,8 @@ export const metadata: Metadata = {
         "Explore the development, artificial intelligence and research-driven experience of Abrar Mojahid Rafi.",
 };
 
-export default function ExperiencePage() {
-    const publishedExperience = [...experience]
-        .filter((item) => item.published)
-        .sort((a, b) => a.order - b.order);
+export default async function ExperiencePage() {
+    const publishedExperience = await getPublishedExperiences();
 
     const numericStartYears = publishedExperience
         .map((item) => Number.parseInt(item.startDate, 10))

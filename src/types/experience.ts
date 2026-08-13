@@ -11,10 +11,6 @@ export interface Experience {
 
     description: string;
 
-    /*
-     * Optional Experience Details
-     */
-
     location?: string;
 
     employmentType?: string;
@@ -26,10 +22,6 @@ export interface Experience {
     logo?: string;
 
     companyUrl?: string;
-
-    /*
-     * CMS Controls
-     */
 
     featured: boolean;
 
