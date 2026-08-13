@@ -9,23 +9,11 @@ export interface Skill {
 
     level: number;
 
-    /*
-     * Visibility Controls
-     */
-
     featured: boolean;
 
     published: boolean;
 
-    /*
-     * Display Order
-     */
-
     order: number;
-
-    /*
-     * Optional CMS Fields
-     */
 
     createdAt?: string;
 

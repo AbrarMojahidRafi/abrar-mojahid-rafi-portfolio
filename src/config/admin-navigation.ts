@@ -92,7 +92,7 @@ export const adminNavigationGroups = [
 
                 description: "Create and organize portfolio skills.",
 
-                available: false,
+                available: true,
             },
 
             {

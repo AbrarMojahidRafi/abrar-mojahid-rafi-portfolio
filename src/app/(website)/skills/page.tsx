@@ -1,23 +1,22 @@
 import type { Metadata } from "next";
 
 import SkillsHero from "@/components/skills/SkillsHero";
+
 import SkillsExplorer from "@/components/skills/SkillsExplorer";
 
 import ContactCTA from "@/components/sections/ContactCTA";
 
-import { skills } from "@/data";
+import { getPublishedSkills } from "@/lib/queries/skills";
 
 export const metadata: Metadata = {
     title: "Skills & Expertise | Abrar Mojahid Rafi",
 
     description:
-        "Explore the technologies, frameworks and technical skills used by Abrar Mojahid Rafi across software development, artificial intelligence and research-driven projects.",
+        "Explore technologies, frameworks and technical skills across software development, artificial intelligence and research-driven projects.",
 };
 
-export default function SkillsPage() {
-    const publishedSkills = [...skills]
-        .filter((skill) => skill.published)
-        .sort((a, b) => a.order - b.order);
+export default async function SkillsPage() {
+    const publishedSkills = await getPublishedSkills();
 
     const categoryCount = new Set(
         publishedSkills.map((skill) => skill.category),
