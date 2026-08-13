@@ -1,161 +1,82 @@
-import { LayoutDashboard, LogOut, ShieldCheck } from "lucide-react";
+import {
+    ArrowUpRight,
+    CheckCircle2,
+    Clock3,
+    LayoutDashboard,
+    ShieldCheck,
+} from "lucide-react";
 
-import { logoutAdmin } from "@/actions/admin/auth";
+import { adminNavigationGroups } from "@/config/admin-navigation";
 
-import { requireAdmin } from "@/lib/auth/require-admin";
-
-export default async function AdminDashboardPage() {
-    const adminUser = await requireAdmin();
+export default function AdminDashboardPage() {
+    const modules = adminNavigationGroups
+        .flatMap((group) => group.items)
+        .filter((item) => item.href !== "/admin");
 
     return (
-        <section
+        <div
             className="
-                relative
-                min-h-screen
-                overflow-hidden
-                px-5
-                py-16
-                sm:px-6
-                lg:py-20
+                mx-auto
+                max-w-7xl
             ">
-            {/* Background Glows */}
+            {/* Page Header */}
 
             <div
                 className="
-                    pointer-events-none
-                    absolute
-                    -left-32
-                    top-20
-                    h-[400px]
-                    w-[400px]
-                    rounded-full
-                    bg-cyan-500/10
-                    blur-[150px]
-                "
-            />
+                    flex
+                    items-center
+                    gap-3
+                    text-cyan-400
+                ">
+                <LayoutDashboard size={19} />
 
-            <div
-                className="
-                    pointer-events-none
-                    absolute
-                    -right-32
-                    bottom-20
-                    h-[400px]
-                    w-[400px]
-                    rounded-full
-                    bg-purple-500/10
-                    blur-[150px]
-                "
-            />
+                <span
+                    className="
+                        text-xs
+                        uppercase
+                        tracking-[0.28em]
+                        sm:text-sm
+                    ">
+                    Admin Dashboard
+                </span>
+            </div>
 
-            <div
+            {/* Authentication Success */}
+
+            <section
                 className="
                     relative
-                    z-10
-                    mx-auto
-                    max-w-7xl
+                    mt-6
+                    overflow-hidden
+                    rounded-[2rem]
+                    border
+                    border-white/10
+                    p-6
+                    glass
+                    sm:p-8
+                    lg:p-10
                 ">
-                {/* Top Bar */}
+                {/* Glow */}
 
                 <div
                     className="
-                        flex
-                        flex-col
-                        gap-5
-                        rounded-3xl
-                        border
-                        border-white/10
-                        p-5
-                        glass
-                        sm:flex-row
-                        sm:items-center
-                        sm:justify-between
-                        sm:p-6
-                    ">
-                    <div
-                        className="
-                            flex
-                            items-center
-                            gap-4
-                        ">
-                        <div
-                            className="
-                                flex
-                                h-12
-                                w-12
-                                shrink-0
-                                items-center
-                                justify-center
-                                rounded-2xl
-                                bg-cyan-400/10
-                                text-cyan-400
-                            ">
-                            <ShieldCheck size={23} />
-                        </div>
-
-                        <div>
-                            <p
-                                className="
-                                    text-xs
-                                    uppercase
-                                    tracking-[0.25em]
-                                    text-cyan-400
-                                ">
-                                Secure Session
-                            </p>
-
-                            <p
-                                className="
-                                    mt-1
-                                    break-all
-                                    text-sm
-                                    text-gray-400
-                                ">
-                                {adminUser.email}
-                            </p>
-                        </div>
-                    </div>
-
-                    <form action={logoutAdmin}>
-                        <button
-                            type="submit"
-                            className="
-                                flex
-                                w-full
-                                items-center
-                                justify-center
-                                gap-2
-                                rounded-full
-                                border
-                                border-white/10
-                                px-5
-                                py-2.5
-                                text-sm
-                                text-gray-300
-                                transition
-                                hover:border-red-400/30
-                                hover:bg-red-400/[0.06]
-                                hover:text-red-300
-                                sm:w-auto
-                            ">
-                            <LogOut size={17} />
-                            Logout
-                        </button>
-                    </form>
-                </div>
-
-                {/* Dashboard */}
+                        pointer-events-none
+                        absolute
+                        -right-20
+                        top-1/2
+                        h-[250px]
+                        w-[300px]
+                        -translate-y-1/2
+                        rounded-full
+                        bg-purple-500/10
+                        blur-[100px]
+                    "
+                />
 
                 <div
                     className="
-                        mt-10
-                        rounded-[2rem]
-                        border
-                        border-white/10
-                        p-7
-                        glass
-                        sm:p-10
-                        lg:p-12
+                        relative
+                        z-10
                     ">
                     <div
                         className="
@@ -165,29 +86,41 @@ export default async function AdminDashboardPage() {
                             items-center
                             justify-center
                             rounded-2xl
-                            bg-purple-500/10
-                            text-purple-300
-                        ">
-                        <LayoutDashboard size={26} />
-                    </div>
-
-                    <p
-                        className="
-                            mt-7
-                            text-sm
-                            uppercase
-                            tracking-[0.3em]
+                            bg-cyan-400/10
                             text-cyan-400
                         ">
-                        Admin Portal
-                    </p>
+                        <ShieldCheck size={27} />
+                    </div>
+
+                    <div
+                        className="
+                            mt-7
+                            flex
+                            items-center
+                            gap-2
+                            text-emerald-300
+                        ">
+                        <CheckCircle2 size={17} />
+
+                        <span
+                            className="
+                                text-xs
+                                font-medium
+                                uppercase
+                                tracking-[0.2em]
+                            ">
+                            Protected Admin Environment
+                        </span>
+                    </div>
 
                     <h1
                         className="
                             mt-4
                             text-4xl
                             font-bold
+                            leading-tight
                             sm:text-5xl
+                            lg:text-6xl
                         ">
                         Authentication{" "}
                         <span className="gradient-text">successful.</span>
@@ -196,18 +129,198 @@ export default async function AdminDashboardPage() {
                     <p
                         className="
                             mt-5
-                            max-w-2xl
+                            max-w-3xl
                             text-base
                             leading-8
                             text-gray-400
                             sm:text-lg
                         ">
-                        The protected admin environment is working. The next
-                        phase will add the dashboard navigation, database schema
-                        and CMS management modules.
+                        Your secure administrator session is active. This
+                        dashboard will become the central workspace for managing
+                        portfolio content, CMS modules, messages and website
+                        configuration.
+                    </p>
+                </div>
+            </section>
+
+            {/* Module Heading */}
+
+            <div
+                className="
+                    mt-12
+                    flex
+                    flex-col
+                    gap-3
+                    sm:flex-row
+                    sm:items-end
+                    sm:justify-between
+                ">
+                <div>
+                    <p
+                        className="
+                            text-xs
+                            uppercase
+                            tracking-[0.25em]
+                            text-cyan-400
+                        ">
+                        CMS Modules
+                    </p>
+
+                    <h2
+                        className="
+                            mt-3
+                            text-3xl
+                            font-bold
+                            sm:text-4xl
+                        ">
+                        Manage your{" "}
+                        <span className="gradient-text">portfolio.</span>
+                    </h2>
+
+                    <p
+                        className="
+                            mt-3
+                            max-w-2xl
+                            leading-7
+                            text-gray-400
+                        ">
+                        Each module will be activated as its database, forms and
+                        management tools are implemented.
                     </p>
                 </div>
             </div>
-        </section>
+
+            {/* Module Grid */}
+
+            <div
+                className="
+                    mt-8
+                    grid
+                    gap-5
+                    sm:grid-cols-2
+                    xl:grid-cols-3
+                ">
+                {modules.map((module) => {
+                    const Icon = module.icon;
+
+                    return (
+                        <article
+                            key={module.href}
+                            className="
+                                    group
+                                    relative
+                                    overflow-hidden
+                                    rounded-3xl
+                                    border
+                                    border-white/10
+                                    bg-white/[0.025]
+                                    p-6
+                                    transition
+                                    hover:border-white/15
+                                    hover:bg-white/[0.035]
+                                ">
+                            <div
+                                className="
+                                        flex
+                                        items-start
+                                        justify-between
+                                        gap-4
+                                    ">
+                                <div
+                                    className="
+                                            flex
+                                            h-11
+                                            w-11
+                                            items-center
+                                            justify-center
+                                            rounded-2xl
+                                            bg-cyan-400/10
+                                            text-cyan-400
+                                        ">
+                                    <Icon size={21} />
+                                </div>
+
+                                {module.available ? (
+                                    <span
+                                        className="
+                                                rounded-full
+                                                border
+                                                border-emerald-400/20
+                                                bg-emerald-400/[0.06]
+                                                px-3
+                                                py-1
+                                                text-[10px]
+                                                uppercase
+                                                tracking-wider
+                                                text-emerald-300
+                                            ">
+                                        Ready
+                                    </span>
+                                ) : (
+                                    <span
+                                        className="
+                                                inline-flex
+                                                items-center
+                                                gap-1.5
+                                                rounded-full
+                                                border
+                                                border-white/10
+                                                px-3
+                                                py-1
+                                                text-[10px]
+                                                uppercase
+                                                tracking-wider
+                                                text-gray-500
+                                            ">
+                                        <Clock3 size={11} />
+                                        Planned
+                                    </span>
+                                )}
+                            </div>
+
+                            <h3
+                                className="
+                                        mt-6
+                                        text-xl
+                                        font-semibold
+                                        text-white
+                                    ">
+                                {module.label}
+                            </h3>
+
+                            <p
+                                className="
+                                        mt-3
+                                        min-h-[52px]
+                                        text-sm
+                                        leading-6
+                                        text-gray-500
+                                    ">
+                                {module.description}
+                            </p>
+
+                            <div
+                                className="
+                                        mt-6
+                                        flex
+                                        items-center
+                                        gap-2
+                                        text-xs
+                                        text-gray-600
+                                    ">
+                                {module.available ? (
+                                    <>
+                                        Open module
+                                        <ArrowUpRight size={14} />
+                                    </>
+                                ) : (
+                                    <>Implementation pending</>
+                                )}
+                            </div>
+                        </article>
+                    );
+                })}
+            </div>
+        </div>
     );
 }
