@@ -2,9 +2,10 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-    title: "Toolnity | Developer Portfolio",
+    title: "Abrar Mojahid Rafi | AI & Full Stack Developer",
+
     description:
-        "A futuristic portfolio website showcasing projects, skills and experience.",
+        "Portfolio of Abrar Mojahid Rafi, an AI developer, research enthusiast and full stack developer building modern web applications, intelligent systems and research-driven technology solutions.",
 };
 
 export default function RootLayout({

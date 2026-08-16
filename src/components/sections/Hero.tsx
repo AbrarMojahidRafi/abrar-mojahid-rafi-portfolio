@@ -1,9 +1,14 @@
 "use client";
 
+import Link from "next/link";
+import Image from "next/image";
+
+import { motion } from "framer-motion";
+
 import Particles from "@/components/ui/Particles";
 import MouseGlow from "@/components/ui/MouseGlow";
-import Image from "next/image";
-import { motion } from "framer-motion";
+
+import { profile } from "@/data";
 
 export default function Hero() {
     return (
@@ -209,37 +214,49 @@ export default function Hero() {
 
                     <div
                         className="
-                        mt-10
-                        flex
-                        justify-center
-                        md:justify-start
-                        gap-5
-                        ">
-                        <button
+        mt-10
+        flex
+        flex-col
+        items-center
+        justify-center
+        gap-4
+        sm:flex-row
+        md:justify-start
+    ">
+                        <Link
+                            href="/projects"
                             className="
-                            premium-button
-                            px-7
-                            py-3
-                            rounded-full
-                            bg-white
-                            text-black
-                            font-medium
-                            ">
+            premium-button
+            inline-flex
+            items-center
+            justify-center
+            px-7
+            py-3
+            rounded-full
+            bg-white
+            text-black
+            font-medium
+        ">
                             View Projects
-                        </button>
+                        </Link>
 
-                        <button
+                        <a
+                            href={profile.resumeUrl}
+                            download="Abrar-Mojahid-Rafi-Resume.pdf"
                             className="
-                            px-7
-                            py-3
-                            rounded-full
-                            border
-                            border-white/20
-                            hover:bg-white/10
-                            transition
-                            ">
+            inline-flex
+            items-center
+            justify-center
+            px-7
+            py-3
+            rounded-full
+            border
+            border-white/20
+            hover:bg-white/10
+            transition
+        ">
                             Download Resume
-                        </button>
+                        </a>
                     </div>
                 </motion.div>
             </div>

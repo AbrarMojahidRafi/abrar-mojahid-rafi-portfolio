@@ -8,12 +8,7 @@ export const socialLinks: SocialLink[] = [
 
         platform: "GitHub",
 
-        /*
-         * Replace with your real
-         * GitHub profile URL.
-         */
-
-        url: "https://github.com/",
+        url: "https://github.com/AbrarMojahidRafi",
 
         icon: "github",
     },
@@ -23,12 +18,7 @@ export const socialLinks: SocialLink[] = [
 
         platform: "LinkedIn",
 
-        /*
-         * Replace with your real
-         * LinkedIn profile URL.
-         */
-
-        url: "https://linkedin.com/",
+        url: "https://www.linkedin.com/in/abrar-mojahid-rafi/",
 
         icon: "linkedin",
     },

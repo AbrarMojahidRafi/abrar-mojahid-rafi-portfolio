@@ -11,7 +11,7 @@ export const profile: Profile = {
 
     profileImage: "/images/Rafi.jpeg",
 
-    resumeUrl: "#",
+    resumeUrl: "/resume/Abrar-Mojahid-Rafi-Resume.pdf",
 
     location: "Bangladesh",
 
