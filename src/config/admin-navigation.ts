@@ -56,7 +56,7 @@ export const adminNavigationGroups = [
 
                 description: "Create and manage portfolio projects.",
 
-                available: false,
+                available: true,
             },
 
             {

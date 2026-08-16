@@ -11,7 +11,10 @@ import RelatedProjects from "@/components/projects/RelatedProjects";
 
 import ContactCTA from "@/components/sections/ContactCTA";
 
-import { projects } from "@/data";
+import {
+    getPublishedProjectBySlug,
+    getRelatedProjects,
+} from "@/lib/queries/projects";
 
 type ProjectPageProps = {
     params: Promise<{
@@ -19,26 +22,19 @@ type ProjectPageProps = {
     }>;
 };
 
-export function generateStaticParams() {
-    return projects
-        .filter((project) => project.published)
-        .map((project) => ({
-            slug: project.slug,
-        }));
-}
-
 export async function generateMetadata({
     params,
 }: ProjectPageProps): Promise<Metadata> {
     const { slug } = await params;
 
-    const project = projects.find(
-        (item) => item.slug === slug && item.published,
-    );
+    const project = await getPublishedProjectBySlug(slug);
 
     if (!project) {
         return {
             title: "Project Not Found | Abrar Mojahid Rafi",
+
+            description:
+                "The requested project could not be found or is not currently published.",
         };
     }
 
@@ -52,28 +48,17 @@ export async function generateMetadata({
 export default async function ProjectPage({ params }: ProjectPageProps) {
     const { slug } = await params;
 
-    const project = projects.find(
-        (item) => item.slug === slug && item.published,
-    );
+    const project = await getPublishedProjectBySlug(slug);
 
     if (!project) {
         notFound();
     }
 
-    const relatedProjects = [...projects]
-        .filter((item) => item.published && item.slug !== project.slug)
-        .sort((a, b) => {
-            const aCategoryPriority = a.category === project.category ? 0 : 1;
-
-            const bCategoryPriority = b.category === project.category ? 0 : 1;
-
-            if (aCategoryPriority !== bCategoryPriority) {
-                return aCategoryPriority - bCategoryPriority;
-            }
-
-            return a.order - b.order;
-        })
-        .slice(0, 2);
+    const relatedProjects = await getRelatedProjects(
+        project.id,
+        project.category,
+        2,
+    );
 
     return (
         <>
