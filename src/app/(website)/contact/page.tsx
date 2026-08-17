@@ -71,7 +71,7 @@ export default async function ContactPage() {
                         socialLinks={socialLinks}
                     />
 
-                    <ContactForm profile={profile} />
+                    <ContactForm />
                 </div>
             </section>
         </>

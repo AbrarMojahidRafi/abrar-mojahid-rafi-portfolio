@@ -122,7 +122,7 @@ export const adminNavigationGroups = [
 
                 description: "Review messages submitted through the website.",
 
-                available: false,
+                available: true,
             },
         ],
     },

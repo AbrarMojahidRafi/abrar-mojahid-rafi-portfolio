@@ -13,7 +13,13 @@ export interface Message {
 
     status: MessageStatus;
 
+    readAt?: string;
+
+    repliedAt?: string;
+
+    archivedAt?: string;
+
     createdAt: string;
 
-    updatedAt?: string;
+    updatedAt: string;
 }
