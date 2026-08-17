@@ -68,7 +68,7 @@ export const adminNavigationGroups = [
 
                 description: "Manage research work and publications.",
 
-                available: false,
+                available: true,
             },
 
             {

@@ -13,7 +13,10 @@ import RelatedResearch from "@/components/research/RelatedResearch";
 
 import ContactCTA from "@/components/sections/ContactCTA";
 
-import { research } from "@/data";
+import {
+    getPublishedResearchBySlug,
+    getRelatedResearch,
+} from "@/lib/queries/research";
 
 type ResearchPageProps = {
     params: Promise<{
@@ -21,26 +24,19 @@ type ResearchPageProps = {
     }>;
 };
 
-export function generateStaticParams() {
-    return research
-        .filter((item) => item.published)
-        .map((item) => ({
-            slug: item.slug,
-        }));
-}
-
 export async function generateMetadata({
     params,
 }: ResearchPageProps): Promise<Metadata> {
     const { slug } = await params;
 
-    const researchItem = research.find(
-        (item) => item.slug === slug && item.published,
-    );
+    const researchItem = await getPublishedResearchBySlug(slug);
 
     if (!researchItem) {
         return {
             title: "Research Not Found | Abrar Mojahid Rafi",
+
+            description:
+                "The requested research item could not be found or is not currently published.",
         };
     }
 
@@ -58,28 +54,17 @@ export default async function ResearchDetailPage({
 }: ResearchPageProps) {
     const { slug } = await params;
 
-    const researchItem = research.find(
-        (item) => item.slug === slug && item.published,
-    );
+    const researchItem = await getPublishedResearchBySlug(slug);
 
     if (!researchItem) {
         notFound();
     }
 
-    const relatedResearch = [...research]
-        .filter((item) => item.published && item.slug !== researchItem.slug)
-        .sort((a, b) => {
-            const aFieldPriority = a.field === researchItem.field ? 0 : 1;
-
-            const bFieldPriority = b.field === researchItem.field ? 0 : 1;
-
-            if (aFieldPriority !== bFieldPriority) {
-                return aFieldPriority - bFieldPriority;
-            }
-
-            return a.order - b.order;
-        })
-        .slice(0, 2);
+    const relatedResearch = await getRelatedResearch(
+        researchItem.id,
+        researchItem.field,
+        2,
+    );
 
     return (
         <>
