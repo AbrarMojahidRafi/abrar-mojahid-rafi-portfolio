@@ -104,7 +104,7 @@ export const adminNavigationGroups = [
 
                 description: "Write, edit and publish blog articles.",
 
-                available: false,
+                available: true,
             },
         ],
     },

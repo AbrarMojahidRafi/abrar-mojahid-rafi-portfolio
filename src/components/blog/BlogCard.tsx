@@ -22,7 +22,9 @@ function formatDate(date: string) {
         day: "numeric",
         year: "numeric",
         timeZone: "UTC",
-    }).format(new Date(`${date}T00:00:00Z`));
+    }).format(
+        date.includes("T") ? new Date(date) : new Date(`${date}T00:00:00Z`),
+    );
 }
 
 export default function BlogCard({ blog, index = 0 }: BlogCardProps) {
