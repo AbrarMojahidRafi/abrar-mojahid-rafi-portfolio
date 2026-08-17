@@ -152,7 +152,7 @@ export const adminNavigationGroups = [
 
                 description: "Manage uploaded portfolio media.",
 
-                available: false,
+                available: true,
             },
 
             {
