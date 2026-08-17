@@ -6,7 +6,9 @@ import { FaEnvelope, FaGithub, FaLinkedinIn } from "react-icons/fa";
 
 import type { IconType } from "react-icons";
 
-import { profile, socialLinks } from "@/data";
+import { socialLinks } from "@/data";
+
+import type { Profile } from "@/types/profile";
 
 const navigation = [
     {
@@ -60,8 +62,21 @@ const socialIconMap: Record<string, IconType> = {
     email: FaEnvelope,
 };
 
-export default function Footer() {
+export default function Footer({ profile }: { profile: Profile }) {
     const currentYear = new Date().getFullYear();
+
+    const resolvedSocialLinks = socialLinks.map((social) => {
+        const iconKey = social.icon.toLowerCase();
+
+        if (iconKey === "mail" || iconKey === "email") {
+            return {
+                ...social,
+                url: `mailto:${profile.email}`,
+            };
+        }
+
+        return social;
+    });
 
     return (
         <footer
@@ -205,7 +220,7 @@ export default function Footer() {
                                 flex-col
                                 gap-3
                             ">
-                            {socialLinks.map((social) => {
+                            {resolvedSocialLinks.map((social) => {
                                 const iconKey = social.icon.toLowerCase();
 
                                 const Icon = socialIconMap[iconKey];

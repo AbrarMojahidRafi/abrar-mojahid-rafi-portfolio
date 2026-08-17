@@ -6,10 +6,14 @@ import ExperiencePreview from "@/components/sections/ExperiencePreview";
 import LatestBlog from "@/components/sections/LatestBlog";
 import ContactCTA from "@/components/sections/ContactCTA";
 
-export default function Home() {
+import { getPublicProfile } from "@/lib/queries/profile";
+
+export default async function Home() {
+    const profile = await getPublicProfile();
+
     return (
         <>
-            <Hero />
+            <Hero profile={profile} />
 
             <FeaturedProjects />
 

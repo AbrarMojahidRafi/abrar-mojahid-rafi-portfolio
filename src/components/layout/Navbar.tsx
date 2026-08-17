@@ -10,7 +10,7 @@ import { AnimatePresence, motion } from "framer-motion";
 
 import { useEffect, useState } from "react";
 
-import { profile } from "@/data";
+import type { Profile } from "@/types/profile";
 
 const links = [
     {
@@ -54,7 +54,7 @@ const links = [
     },
 ];
 
-export default function Navbar() {
+export default function Navbar({ profile }: { profile: Profile }) {
     const pathname = usePathname();
 
     const [open, setOpen] = useState(false);

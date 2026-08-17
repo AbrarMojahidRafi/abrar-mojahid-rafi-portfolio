@@ -7,9 +7,11 @@ import { motion } from "framer-motion";
 
 import { ArrowRight, Download, MapPin, Sparkles } from "lucide-react";
 
-import { about, profile } from "@/data";
+import { about } from "@/data";
 
-export default function AboutHero() {
+import type { Profile } from "@/types/profile";
+
+export default function AboutHero({ profile }: { profile: Profile }) {
     return (
         <section
             className="

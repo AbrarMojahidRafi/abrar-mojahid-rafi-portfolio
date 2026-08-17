@@ -14,7 +14,7 @@ import {
     UserRound,
 } from "lucide-react";
 
-import { profile } from "@/data";
+import type { Profile } from "@/types/profile";
 
 type ContactFormValues = {
     name: string;
@@ -38,7 +38,7 @@ const initialValues: ContactFormValues = {
     message: "",
 };
 
-export default function ContactForm() {
+export default function ContactForm({ profile }: { profile: Profile }) {
     const [values, setValues] = useState<ContactFormValues>(initialValues);
 
     const [errors, setErrors] = useState<ContactFormErrors>({});

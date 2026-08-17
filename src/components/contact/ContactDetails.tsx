@@ -8,7 +8,9 @@ import { FaGithub, FaLinkedinIn } from "react-icons/fa";
 
 import type { IconType } from "react-icons";
 
-import { profile, socialLinks } from "@/data";
+import { socialLinks } from "@/data";
+
+import type { Profile } from "@/types/profile";
 
 const socialIconMap: Record<string, IconType> = {
     github: FaGithub,
@@ -37,7 +39,7 @@ function isUsableSocialUrl(url: string) {
     return true;
 }
 
-export default function ContactDetails() {
+export default function ContactDetails({ profile }: { profile: Profile }) {
     const externalSocials = socialLinks.filter(
         (social) =>
             social.icon !== "mail" &&

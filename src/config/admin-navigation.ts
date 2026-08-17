@@ -44,7 +44,7 @@ export const adminNavigationGroups = [
 
                 description: "Manage profile and personal information.",
 
-                available: false,
+                available: true,
             },
 
             {

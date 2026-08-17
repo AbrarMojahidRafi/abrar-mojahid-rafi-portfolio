@@ -4,6 +4,8 @@ import ContactHero from "@/components/contact/ContactHero";
 import ContactDetails from "@/components/contact/ContactDetails";
 import ContactForm from "@/components/contact/ContactForm";
 
+import { getPublicProfile } from "@/lib/queries/profile";
+
 export const metadata: Metadata = {
     title: "Contact | Abrar Mojahid Rafi",
 
@@ -11,7 +13,9 @@ export const metadata: Metadata = {
         "Get in touch with Abrar Mojahid Rafi for software development, artificial intelligence, research and technology collaboration.",
 };
 
-export default function ContactPage() {
+export default async function ContactPage() {
+    const profile = await getPublicProfile();
+
     return (
         <>
             <ContactHero />
@@ -58,9 +62,9 @@ export default function ContactPage() {
                         lg:items-start
                         lg:gap-10
                     ">
-                    <ContactDetails />
+                    <ContactDetails profile={profile} />
 
-                    <ContactForm />
+                    <ContactForm profile={profile} />
                 </div>
             </section>
         </>

@@ -8,9 +8,9 @@ import { motion } from "framer-motion";
 import Particles from "@/components/ui/Particles";
 import MouseGlow from "@/components/ui/MouseGlow";
 
-import { profile } from "@/data";
+import type { Profile } from "@/types/profile";
 
-export default function Hero() {
+export default function Hero({ profile }: { profile: Profile }) {
     return (
         <section
             className="
@@ -138,8 +138,8 @@ export default function Hero() {
                             shadow-2xl
                             ">
                             <Image
-                                src="/images/Rafi.jpeg"
-                                alt="Rafi's Profile"
+                                src={profile.profileImage}
+                                alt={`${profile.name} profile`}
                                 fill
                                 className="
                                 object-cover
@@ -208,8 +208,7 @@ export default function Hero() {
                         mx-auto
                         md:mx-0
                         ">
-                        I create modern web applications, AI solutions and
-                        immersive digital experiences.
+                        {profile.bio}
                     </p>
 
                     <div

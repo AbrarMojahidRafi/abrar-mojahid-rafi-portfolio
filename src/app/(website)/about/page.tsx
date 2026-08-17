@@ -12,6 +12,8 @@ import CurrentFocus from "@/components/about/CurrentFocus";
 
 import ContactCTA from "@/components/sections/ContactCTA";
 
+import { getPublicProfile } from "@/lib/queries/profile";
+
 export const metadata: Metadata = {
     title: "About | Abrar Mojahid Rafi",
 
@@ -19,10 +21,12 @@ export const metadata: Metadata = {
         "Learn more about Abrar Mojahid Rafi, his development journey, research interests, education, values and current focus.",
 };
 
-export default function AboutPage() {
+export default async function AboutPage() {
+    const profile = await getPublicProfile();
+
     return (
         <>
-            <AboutHero />
+            <AboutHero profile={profile} />
 
             <PersonalStory />
 
