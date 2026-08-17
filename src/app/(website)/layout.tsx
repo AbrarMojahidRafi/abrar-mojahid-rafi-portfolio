@@ -2,13 +2,17 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 
 import { getPublicProfile } from "@/lib/queries/profile";
+import { getActiveSocialLinks } from "@/lib/queries/social-links";
 
 export default async function WebsiteLayout({
     children,
 }: Readonly<{
     children: React.ReactNode;
 }>) {
-    const profile = await getPublicProfile();
+    const [profile, socialLinks] = await Promise.all([
+        getPublicProfile(),
+        getActiveSocialLinks(),
+    ]);
 
     return (
         <>
@@ -16,7 +20,7 @@ export default async function WebsiteLayout({
 
             <main>{children}</main>
 
-            <Footer profile={profile} />
+            <Footer profile={profile} socialLinks={socialLinks} />
         </>
     );
 }

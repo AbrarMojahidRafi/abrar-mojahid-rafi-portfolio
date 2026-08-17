@@ -4,18 +4,10 @@ import { motion } from "framer-motion";
 
 import { ArrowUpRight, ExternalLink, Mail, MapPin } from "lucide-react";
 
-import { FaGithub, FaLinkedinIn } from "react-icons/fa";
-
-import type { IconType } from "react-icons";
-
-import { socialLinks } from "@/data";
+import { socialIconMap } from "@/config/social-icons";
 
 import type { Profile } from "@/types/profile";
-
-const socialIconMap: Record<string, IconType> = {
-    github: FaGithub,
-    linkedin: FaLinkedinIn,
-};
+import type { SocialLink } from "@/types/social";
 
 function isUsableSocialUrl(url: string) {
     const value = url.trim().toLowerCase().replace(/\/+$/, "");
@@ -39,12 +31,17 @@ function isUsableSocialUrl(url: string) {
     return true;
 }
 
-export default function ContactDetails({ profile }: { profile: Profile }) {
-    const externalSocials = socialLinks.filter(
-        (social) =>
-            social.icon !== "mail" &&
-            social.icon !== "email" &&
-            isUsableSocialUrl(social.url),
+type ContactDetailsProps = {
+    profile: Profile;
+    socialLinks: SocialLink[];
+};
+
+export default function ContactDetails({
+    profile,
+    socialLinks,
+}: ContactDetailsProps) {
+    const externalSocials = socialLinks.filter((social) =>
+        isUsableSocialUrl(social.url),
     );
 
     return (
@@ -264,8 +261,7 @@ export default function ContactDetails({ profile }: { profile: Profile }) {
                             space-y-3
                         ">
                         {externalSocials.map((social) => {
-                            const Icon =
-                                socialIconMap[social.icon.toLowerCase()];
+                            const Icon = socialIconMap[social.icon];
 
                             return (
                                 <a

@@ -2,13 +2,12 @@ import Link from "next/link";
 
 import { ExternalLink } from "lucide-react";
 
-import { FaEnvelope, FaGithub, FaLinkedinIn } from "react-icons/fa";
+import { FaEnvelope } from "react-icons/fa";
 
-import type { IconType } from "react-icons";
-
-import { socialLinks } from "@/data";
+import { socialIconMap } from "@/config/social-icons";
 
 import type { Profile } from "@/types/profile";
+import type { SocialLink } from "@/types/social";
 
 const navigation = [
     {
@@ -52,31 +51,28 @@ const navigation = [
     },
 ];
 
-const socialIconMap: Record<string, IconType> = {
-    github: FaGithub,
-
-    linkedin: FaLinkedinIn,
-
-    mail: FaEnvelope,
-
-    email: FaEnvelope,
+type FooterProps = {
+    profile: Profile;
+    socialLinks: SocialLink[];
 };
 
-export default function Footer({ profile }: { profile: Profile }) {
+export default function Footer({ profile, socialLinks }: FooterProps) {
     const currentYear = new Date().getFullYear();
 
-    const resolvedSocialLinks = socialLinks.map((social) => {
-        const iconKey = social.icon.toLowerCase();
-
-        if (iconKey === "mail" || iconKey === "email") {
-            return {
-                ...social,
-                url: `mailto:${profile.email}`,
-            };
-        }
-
-        return social;
-    });
+    const resolvedSocialLinks = [
+        ...socialLinks.map((social) => ({
+            ...social,
+            Icon: socialIconMap[social.icon],
+            isEmail: false,
+        })),
+        {
+            id: "profile-email",
+            platform: "Email",
+            url: `mailto:${profile.email}`,
+            Icon: FaEnvelope,
+            isEmail: true,
+        },
+    ];
 
     return (
         <footer
@@ -221,20 +217,23 @@ export default function Footer({ profile }: { profile: Profile }) {
                                 gap-3
                             ">
                             {resolvedSocialLinks.map((social) => {
-                                const iconKey = social.icon.toLowerCase();
-
-                                const Icon = socialIconMap[iconKey];
-
-                                const isEmail =
-                                    social.url.startsWith("mailto:");
+                                const Icon = social.Icon;
 
                                 return (
                                     <a
                                         key={social.id}
                                         href={social.url}
                                         aria-label={social.platform}
-                                        target={isEmail ? undefined : "_blank"}
-                                        rel={isEmail ? undefined : "noreferrer"}
+                                        target={
+                                            social.isEmail
+                                                ? undefined
+                                                : "_blank"
+                                        }
+                                        rel={
+                                            social.isEmail
+                                                ? undefined
+                                                : "noreferrer"
+                                        }
                                         className="
                                                 group
                                                 flex
@@ -260,21 +259,12 @@ export default function Footer({ profile }: { profile: Profile }) {
                                                     items-center
                                                     gap-3
                                                 ">
-                                            {Icon ? (
-                                                <Icon
-                                                    size={18}
-                                                    className="
-                                                            text-cyan-400
-                                                        "
-                                                />
-                                            ) : (
-                                                <ExternalLink
-                                                    size={18}
-                                                    className="
-                                                            text-cyan-400
-                                                        "
-                                                />
-                                            )}
+                                            <Icon
+                                                size={18}
+                                                className="
+                                                        text-cyan-400
+                                                    "
+                                            />
 
                                             {social.platform}
                                         </span>

@@ -5,6 +5,7 @@ import ContactDetails from "@/components/contact/ContactDetails";
 import ContactForm from "@/components/contact/ContactForm";
 
 import { getPublicProfile } from "@/lib/queries/profile";
+import { getActiveSocialLinks } from "@/lib/queries/social-links";
 
 export const metadata: Metadata = {
     title: "Contact | Abrar Mojahid Rafi",
@@ -14,7 +15,10 @@ export const metadata: Metadata = {
 };
 
 export default async function ContactPage() {
-    const profile = await getPublicProfile();
+    const [profile, socialLinks] = await Promise.all([
+        getPublicProfile(),
+        getActiveSocialLinks(),
+    ]);
 
     return (
         <>
@@ -62,7 +66,10 @@ export default async function ContactPage() {
                         lg:items-start
                         lg:gap-10
                     ">
-                    <ContactDetails profile={profile} />
+                    <ContactDetails
+                        profile={profile}
+                        socialLinks={socialLinks}
+                    />
 
                     <ContactForm profile={profile} />
                 </div>

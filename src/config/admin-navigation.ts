@@ -140,7 +140,7 @@ export const adminNavigationGroups = [
 
                 description: "Manage social and external profile links.",
 
-                available: false,
+                available: true,
             },
 
             {
