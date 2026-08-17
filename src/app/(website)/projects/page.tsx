@@ -9,7 +9,7 @@ import ContactCTA from "@/components/sections/ContactCTA";
 import { getPublishedProjects } from "@/lib/queries/projects";
 
 export const metadata: Metadata = {
-    title: "Projects | Abrar Mojahid Rafi",
+    title: "Projects",
 
     description:
         "Explore software development, artificial intelligence and research-driven projects by Abrar Mojahid Rafi.",

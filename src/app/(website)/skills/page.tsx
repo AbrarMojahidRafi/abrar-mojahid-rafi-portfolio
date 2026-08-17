@@ -9,7 +9,7 @@ import ContactCTA from "@/components/sections/ContactCTA";
 import { getPublishedSkills } from "@/lib/queries/skills";
 
 export const metadata: Metadata = {
-    title: "Skills & Expertise | Abrar Mojahid Rafi",
+    title: "Skills & Expertise",
 
     description:
         "Explore technologies, frameworks and technical skills across software development, artificial intelligence and research-driven projects.",

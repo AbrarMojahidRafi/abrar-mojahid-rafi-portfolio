@@ -31,7 +31,7 @@ export async function generateMetadata({
 
     if (!project) {
         return {
-            title: "Project Not Found | Abrar Mojahid Rafi",
+            title: "Project Not Found",
 
             description:
                 "The requested project could not be found or is not currently published.",
@@ -39,7 +39,7 @@ export async function generateMetadata({
     }
 
     return {
-        title: `${project.title} | Projects | Abrar Mojahid Rafi`,
+        title: `${project.title} | Projects`,
 
         description: project.shortDescription,
     };

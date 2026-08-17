@@ -164,7 +164,7 @@ export const adminNavigationGroups = [
 
                 description: "Manage general website configuration.",
 
-                available: false,
+                available: true,
             },
         ],
     },

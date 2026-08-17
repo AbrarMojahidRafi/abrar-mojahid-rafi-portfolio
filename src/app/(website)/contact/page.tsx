@@ -8,7 +8,7 @@ import { getPublicProfile } from "@/lib/queries/profile";
 import { getActiveSocialLinks } from "@/lib/queries/social-links";
 
 export const metadata: Metadata = {
-    title: "Contact | Abrar Mojahid Rafi",
+    title: "Contact",
 
     description:
         "Get in touch with Abrar Mojahid Rafi for software development, artificial intelligence, research and technology collaboration.",

@@ -1,7 +1,8 @@
-import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-
+import Navbar from "@/components/layout/Navbar";
+import MaintenanceScreen from "@/components/settings/MaintenanceScreen";
 import { getPublicProfile } from "@/lib/queries/profile";
+import { getPublicSettings } from "@/lib/queries/settings";
 import { getActiveSocialLinks } from "@/lib/queries/social-links";
 
 export default async function WebsiteLayout({
@@ -9,10 +10,15 @@ export default async function WebsiteLayout({
 }: Readonly<{
     children: React.ReactNode;
 }>) {
-    const [profile, socialLinks] = await Promise.all([
+    const [profile, socialLinks, settings] = await Promise.all([
         getPublicProfile(),
         getActiveSocialLinks(),
+        getPublicSettings(),
     ]);
+
+    if (settings.maintenanceMode) {
+        return <MaintenanceScreen settings={settings} profile={profile} />;
+    }
 
     return (
         <>
@@ -20,7 +26,11 @@ export default async function WebsiteLayout({
 
             <main>{children}</main>
 
-            <Footer profile={profile} socialLinks={socialLinks} />
+            <Footer
+                profile={profile}
+                socialLinks={socialLinks}
+                settings={settings}
+            />
         </>
     );
 }

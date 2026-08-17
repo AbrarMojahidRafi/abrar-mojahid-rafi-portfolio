@@ -6,7 +6,7 @@ import ContactCTA from "@/components/sections/ContactCTA";
 import { getPublishedBlogs } from "@/lib/queries/blogs";
 
 export const metadata: Metadata = {
-    title: "Blog | Abrar Mojahid Rafi",
+    title: "Blog",
     description:
         "Explore articles by Abrar Mojahid Rafi about software development, artificial intelligence, research and technology.",
 };

@@ -159,6 +159,20 @@ function addExperienceReferences(
     }
 }
 
+function addSettingsReferences(
+    references: MediaReferenceMap,
+    settingsRows: Array<Record<string, unknown>>,
+) {
+    for (const settings of settingsRows) {
+        addReference(references, settings.og_image, {
+            source: "settings",
+            label: "Website Settings",
+            field: "Default OG image",
+            adminHref: "/admin/settings",
+        });
+    }
+}
+
 function addSkillReferences(
     references: MediaReferenceMap,
     skills: Array<Record<string, unknown>>,
@@ -190,6 +204,7 @@ async function buildMediaReferenceMap(
         profilesResult,
         experienceResult,
         skillsResult,
+        settingsResult,
     ] = await Promise.all([
         supabase.from("projects").select("id, title, thumbnail_url, gallery"),
         supabase.from("research").select("id, title, image_url, paper_url"),
@@ -197,6 +212,7 @@ async function buildMediaReferenceMap(
         supabase.from("profiles").select("id, name, profile_image, resume_url"),
         supabase.from("experience").select("id, role, company, logo_url"),
         supabase.from("skills").select("id, name, icon"),
+        supabase.from("site_settings").select("id, og_image"),
     ]);
 
     const queryErrors = [
@@ -206,6 +222,7 @@ async function buildMediaReferenceMap(
         profilesResult.error,
         experienceResult.error,
         skillsResult.error,
+        settingsResult.error,
     ].filter(Boolean);
 
     if (queryErrors.length > 0) {
@@ -248,6 +265,11 @@ async function buildMediaReferenceMap(
     addSkillReferences(
         references,
         (skillsResult.data ?? []) as Array<Record<string, unknown>>,
+    );
+
+    addSettingsReferences(
+        references,
+        (settingsResult.data ?? []) as Array<Record<string, unknown>>,
     );
 
     return references;

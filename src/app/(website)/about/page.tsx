@@ -15,7 +15,7 @@ import ContactCTA from "@/components/sections/ContactCTA";
 import { getPublicProfile } from "@/lib/queries/profile";
 
 export const metadata: Metadata = {
-    title: "About | Abrar Mojahid Rafi",
+    title: "About",
 
     description:
         "Learn more about Abrar Mojahid Rafi, his development journey, research interests, education, values and current focus.",

@@ -21,12 +21,12 @@ export async function generateMetadata({
 
     if (!blog) {
         return {
-            title: "Article Not Found | Abrar Mojahid Rafi",
+            title: "Article Not Found",
         };
     }
 
     return {
-        title: `${blog.title} | Blog | Abrar Mojahid Rafi`,
+        title: `${blog.title} | Blog`,
         description: blog.excerpt,
         keywords: blog.tags,
     };

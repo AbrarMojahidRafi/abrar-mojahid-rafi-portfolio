@@ -33,7 +33,7 @@ export async function generateMetadata({
 
     if (!researchItem) {
         return {
-            title: "Research Not Found | Abrar Mojahid Rafi",
+            title: "Research Not Found",
 
             description:
                 "The requested research item could not be found or is not currently published.",
@@ -41,7 +41,7 @@ export async function generateMetadata({
     }
 
     return {
-        title: `${researchItem.title} | Research | Abrar Mojahid Rafi`,
+        title: `${researchItem.title} | Research`,
 
         description: researchItem.description,
 

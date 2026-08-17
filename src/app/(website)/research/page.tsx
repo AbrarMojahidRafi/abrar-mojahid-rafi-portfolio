@@ -8,7 +8,7 @@ import ContactCTA from "@/components/sections/ContactCTA";
 import { getPublishedResearch } from "@/lib/queries/research";
 
 export const metadata: Metadata = {
-    title: "Research | Abrar Mojahid Rafi",
+    title: "Research",
 
     description:
         "Explore research projects by Abrar Mojahid Rafi across artificial intelligence, machine learning and research-driven technology.",

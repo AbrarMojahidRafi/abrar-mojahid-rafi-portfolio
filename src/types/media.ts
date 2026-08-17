@@ -6,7 +6,8 @@ export type MediaReferenceSource =
     | "blog"
     | "profile"
     | "experience"
-    | "skill";
+    | "skill"
+    | "settings";
 
 export interface MediaReference {
     source: MediaReferenceSource;

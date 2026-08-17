@@ -8,6 +8,7 @@ import { socialIconMap } from "@/config/social-icons";
 
 import type { Profile } from "@/types/profile";
 import type { SocialLink } from "@/types/social";
+import type { SiteSettings } from "@/types/settings";
 
 const navigation = [
     {
@@ -54,9 +55,14 @@ const navigation = [
 type FooterProps = {
     profile: Profile;
     socialLinks: SocialLink[];
+    settings: SiteSettings;
 };
 
-export default function Footer({ profile, socialLinks }: FooterProps) {
+export default function Footer({
+    profile,
+    socialLinks,
+    settings,
+}: FooterProps) {
     const currentYear = new Date().getFullYear();
 
     const resolvedSocialLinks = [
@@ -302,10 +308,11 @@ export default function Footer({ profile, socialLinks }: FooterProps) {
                         sm:justify-between
                     ">
                     <p>
-                        © {currentYear} {profile.name}. All rights reserved.
+                        © {currentYear} {settings.siteName}.{" "}
+                        {settings.copyrightText}
                     </p>
 
-                    <p>Designed and developed with Next.js.</p>
+                    <p>{settings.footerNote}</p>
                 </div>
             </div>
         </footer>
