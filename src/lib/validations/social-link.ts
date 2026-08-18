@@ -42,7 +42,7 @@ export const socialLinkSchema = z.object({
     icon: z.enum(SOCIAL_ICON_KEYS),
 
     order: z.coerce
-        .number()
+        .number<number>()
         .int("Display order must be a whole number.")
         .min(0, "Display order cannot be negative.")
         .max(9999, "Display order is too large."),

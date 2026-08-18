@@ -83,7 +83,7 @@ export const experienceSchema = z.object({
 
     order: requiredNumber(
         z.coerce
-            .number()
+            .number<number>()
             .int("Order must be a whole number.")
             .min(0, "Order cannot be negative.")
             .max(9999, "Order is too large."),

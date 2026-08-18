@@ -36,7 +36,7 @@ export const skillSchema = z.object({
 
     level: requiredNumber(
         z.coerce
-            .number()
+            .number<number>()
             .int("Level must be a whole number.")
             .min(0, "Level cannot be below 0.")
             .max(100, "Level cannot exceed 100."),
@@ -44,7 +44,7 @@ export const skillSchema = z.object({
 
     order: requiredNumber(
         z.coerce
-            .number()
+            .number<number>()
             .int("Order must be a whole number.")
             .min(0, "Order cannot be negative.")
             .max(9999, "Order is too large."),

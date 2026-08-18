@@ -5,31 +5,19 @@ import { profile } from "./profile";
 export const socialLinks: SocialLink[] = [
     {
         id: "1",
-
         platform: "GitHub",
-
-        url: "https://github.com/AbrarMojahidRafi",
-
+        url: "https://github.com/...",
         icon: "github",
+        active: true,
+        order: 1,
     },
 
     {
         id: "2",
-
         platform: "LinkedIn",
-
-        url: "https://www.linkedin.com/in/abrar-mojahid-rafi/",
-
+        url: "https://linkedin.com/...",
         icon: "linkedin",
-    },
-
-    {
-        id: "3",
-
-        platform: "Email",
-
-        url: `mailto:${profile.email}`,
-
-        icon: "mail",
+        active: true,
+        order: 2,
     },
 ];

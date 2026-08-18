@@ -231,7 +231,7 @@ export const projectSchema = z.object({
 
     liveUrl: optionalHttpUrl,
 
-    order: requiredNumber(z.coerce.number().int().min(0).max(9999)),
+    order: requiredNumber(z.coerce.number<number>().int().min(0).max(9999)),
 
     featured: checkboxSchema,
 
