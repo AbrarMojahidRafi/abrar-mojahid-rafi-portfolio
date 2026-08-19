@@ -19,5 +19,17 @@ export interface CompetitiveProblem {
 
     tags: string[];
 
+    /*
+     * TRUE:
+     * This saved problem contributes +1 to the
+     * selected platform's solved_count.
+     *
+     * FALSE:
+     * Historical problem added only for portfolio
+     * documentation. Its solve was already included
+     * in the manually recorded platform total.
+     */
+    counted_in_total: boolean;
+
     created_at: string;
 }

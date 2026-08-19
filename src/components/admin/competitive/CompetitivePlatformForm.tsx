@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+
 import { useRouter } from "next/navigation";
 
 import { Save, X } from "lucide-react";
@@ -19,6 +20,7 @@ type CompetitivePlatformFormProps = {
 
 const initialState: CompetitivePlatformActionState = {
     message: "",
+
     errors: {},
 };
 
@@ -52,10 +54,18 @@ export default function CompetitivePlatformForm({
     const router = useRouter();
 
     const action = platform
-        ? updateCompetitivePlatform.bind(null, platform.id)
+        ? updateCompetitivePlatform.bind(
+              null,
+
+              platform.id,
+          )
         : createCompetitivePlatform;
 
-    const [state, formAction, pending] = useActionState(action, initialState);
+    const [state, formAction, pending] = useActionState(
+        action,
+
+        initialState,
+    );
 
     return (
         <form
@@ -78,11 +88,14 @@ export default function CompetitivePlatformForm({
                 </h2>
 
                 <p className="mt-2 max-w-2xl text-sm leading-6 text-gray-500">
-                    This information is used on the homepage and Competitive
-                    Programming overview.
+                    Manage the current total number of problems solved on this
+                    platform. Future solved problems marked for auto-sync will
+                    automatically increase or decrease this number.
                 </p>
 
                 <div className="mt-7 grid gap-6 md:grid-cols-2">
+                    {/* NAME */}
+
                     <div>
                         <label
                             htmlFor="name"
@@ -101,6 +114,8 @@ export default function CompetitivePlatformForm({
 
                         <ErrorText messages={state.errors?.name} />
                     </div>
+
+                    {/* SLUG */}
 
                     <div>
                         <label
@@ -125,11 +140,13 @@ export default function CompetitivePlatformForm({
                         <ErrorText messages={state.errors?.slug} />
                     </div>
 
-                    <div>
+                    {/* TOTAL */}
+
+                    <div className="md:col-span-2">
                         <label
                             htmlFor="solvedCount"
                             className="mb-2 block text-sm text-gray-300">
-                            Total Problems Solved
+                            Current Total Problems Solved
                         </label>
 
                         <input
@@ -142,15 +159,38 @@ export default function CompetitivePlatformForm({
                             className={inputClass}
                         />
 
-                        <p className="mt-2 text-xs text-gray-600">
-                            This is the overall solved count for the platform.
-                            It does not need to equal the number of documented
-                            portfolio problems.
-                        </p>
+                        <div
+                            className="
+                                mt-3
+                                rounded-2xl
+                                border
+                                border-cyan-400/15
+                                bg-cyan-400/[0.035]
+                                p-4
+                            ">
+                            <p className="text-xs font-medium text-cyan-300">
+                                Manual total + automatic sync
+                            </p>
+
+                            <p className="mt-2 text-xs leading-5 text-gray-500">
+                                You can manually correct this total at any time.
+                                After saving, future problems with “Count toward
+                                solved total” enabled will automatically add +1
+                                when created and -1 when removed.
+                            </p>
+
+                            <p className="mt-2 text-xs leading-5 text-gray-600">
+                                Example: If you manually set this to 500 and
+                                then add a newly solved counted problem, the CMS
+                                will automatically change it to 501.
+                            </p>
+                        </div>
 
                         <ErrorText messages={state.errors?.solvedCount} />
                     </div>
                 </div>
+
+                {/* DESCRIPTION */}
 
                 <div className="mt-6">
                     <label
@@ -172,6 +212,8 @@ export default function CompetitivePlatformForm({
                 </div>
             </section>
 
+            {/* ERROR */}
+
             {state.message && (
                 <div
                     className="
@@ -187,6 +229,8 @@ export default function CompetitivePlatformForm({
                     {state.message}
                 </div>
             )}
+
+            {/* ACTIONS */}
 
             <div className="mt-9 flex flex-col-reverse gap-3 border-t border-white/10 pt-7 sm:flex-row sm:justify-end">
                 <button

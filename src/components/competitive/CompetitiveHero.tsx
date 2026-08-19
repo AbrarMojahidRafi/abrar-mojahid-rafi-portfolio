@@ -6,29 +6,44 @@ import { Code2, FileCode2, Layers3, Sparkles, Trophy } from "lucide-react";
 
 type CompetitiveHeroProps = {
     totalSolved: number;
+
     platformCount: number;
+
     problemCount: number;
 };
 
 export default function CompetitiveHero({
     totalSolved,
+
     platformCount,
+
     problemCount,
 }: CompetitiveHeroProps) {
     const stats = [
         {
             label: "Problems Solved",
+
             value: `${totalSolved}+`,
+
             icon: Trophy,
         },
+
         {
-            label: "Platforms",
+            label: platformCount === 1 ? "Platform" : "Platforms",
+
             value: platformCount,
+
             icon: Layers3,
         },
+
         {
-            label: "Documented Solutions",
+            label:
+                problemCount === 1
+                    ? "Solved Problem Added"
+                    : "Solved Problems Added",
+
             value: problemCount,
+
             icon: FileCode2,
         },
     ];
@@ -44,6 +59,8 @@ export default function CompetitiveHero({
                 md:pb-24
                 md:pt-40
             ">
+            {/* GLOWS */}
+
             <div
                 className="
                     pointer-events-none
@@ -73,13 +90,17 @@ export default function CompetitiveHero({
             />
 
             <div className="relative z-10 mx-auto max-w-7xl">
+                {/* INTRO */}
+
                 <motion.div
                     initial={{
                         opacity: 0,
+
                         y: 30,
                     }}
                     animate={{
                         opacity: 1,
+
                         y: 0,
                     }}
                     transition={{
@@ -111,23 +132,29 @@ export default function CompetitiveHero({
                     </h1>
 
                     <p className="mx-auto mt-7 max-w-3xl text-lg leading-8 text-gray-400 md:text-xl">
-                        A collection of programming problems, algorithms and
-                        solution approaches developed through consistent
-                        competitive problem solving.
+                        A growing record of competitive programming problems
+                        I&apos;ve solved across different platforms, together
+                        with selected solution approaches, implementations and
+                        code.
                     </p>
                 </motion.div>
+
+                {/* STATS */}
 
                 <motion.div
                     initial={{
                         opacity: 0,
+
                         y: 25,
                     }}
                     animate={{
                         opacity: 1,
+
                         y: 0,
                     }}
                     transition={{
                         duration: 0.6,
+
                         delay: 0.2,
                     }}
                     className="
@@ -138,54 +165,60 @@ export default function CompetitiveHero({
                         gap-4
                         sm:grid-cols-3
                     ">
-                    {stats.map((stat, index) => {
-                        const Icon = stat.icon;
+                    {stats.map(
+                        (
+                            stat,
 
-                        return (
-                            <div
-                                key={stat.label}
-                                className="
-                                    flex
-                                    items-center
-                                    gap-4
-                                    rounded-3xl
-                                    border
-                                    border-white/10
-                                    p-5
-                                    text-left
-                                    glass
-                                ">
+                            index,
+                        ) => {
+                            const Icon = stat.icon;
+
+                            return (
                                 <div
-                                    className={`
+                                    key={stat.label}
+                                    className="
                                         flex
-                                        h-11
-                                        w-11
-                                        shrink-0
                                         items-center
-                                        justify-center
-                                        rounded-2xl
+                                        gap-4
+                                        rounded-3xl
+                                        border
+                                        border-white/10
+                                        p-5
+                                        text-left
+                                        glass
+                                    ">
+                                    <div
+                                        className={`
+                                            flex
+                                            h-11
+                                            w-11
+                                            shrink-0
+                                            items-center
+                                            justify-center
+                                            rounded-2xl
 
-                                        ${
-                                            index === 1
-                                                ? "bg-purple-500/10 text-purple-300"
-                                                : "bg-cyan-400/10 text-cyan-400"
-                                        }
-                                    `}>
-                                    <Icon size={21} />
+                                            ${
+                                                index === 1
+                                                    ? "bg-purple-500/10 text-purple-300"
+                                                    : "bg-cyan-400/10 text-cyan-400"
+                                            }
+                                        `}>
+                                        <Icon size={21} />
+                                    </div>
+
+                                    <div>
+                                        <p className="text-2xl font-bold">
+                                            {stat.value}
+                                        </p>
+
+                                        <p className="text-sm text-gray-400">
+                                            {stat.label}
+                                        </p>
+                                    </div>
                                 </div>
-
-                                <div>
-                                    <p className="text-2xl font-bold">
-                                        {stat.value}
-                                    </p>
-
-                                    <p className="text-sm text-gray-400">
-                                        {stat.label}
-                                    </p>
-                                </div>
-                            </div>
-                        );
-                    })}
+                            );
+                        },
+                    )}
                 </motion.div>
 
                 <div className="mt-8 flex justify-center text-cyan-400/30">

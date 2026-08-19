@@ -1,9 +1,11 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+
 import { redirect } from "next/navigation";
 
 import { requireAdmin } from "@/lib/auth/require-admin";
+
 import { createClient } from "@/lib/supabase/server";
 
 import {
@@ -16,13 +18,22 @@ import {
     getCompetitiveMediaPathFromUrl,
 } from "@/lib/storage/competitive-media";
 
+/*
+ * =============================================
+ * ACTION STATE TYPES
+ * =============================================
+ */
+
 export type CompetitivePlatformActionState = {
     message?: string;
 
     errors?: {
         name?: string[];
+
         slug?: string[];
+
         solvedCount?: string[];
+
         description?: string[];
     };
 };
@@ -30,38 +41,65 @@ export type CompetitivePlatformActionState = {
 export type CompetitiveProblemActionState = {
     message?: string;
 
-    errors?: {
-        title?: string[];
-        platform?: string[];
-        problemLink?: string[];
-        language?: string[];
-        codeScreenshot?: string[];
-        solutionCode?: string[];
-        explanation?: string[];
-        solvedDate?: string[];
-        tags?: string[];
-    };
+    errors?: Partial<
+        Record<
+            | "title"
+            | "platformMode"
+            | "platform"
+            | "newPlatformName"
+            | "newPlatformDescription"
+            | "newPlatformSolvedCount"
+            | "problemLink"
+            | "language"
+            | "codeScreenshot"
+            | "solutionCode"
+            | "explanation"
+            | "solvedDate"
+            | "tags"
+            | "countedInTotal",
+            string[]
+        >
+    >;
 };
 
 export type DeleteCompetitiveResult = {
     success: boolean;
+
     error?: string;
 };
 
 type ServerSupabaseClient = Awaited<ReturnType<typeof createClient>>;
 
+/*
+ * =============================================
+ * REVALIDATION
+ * =============================================
+ */
+
 function revalidateCompetitivePages() {
     revalidatePath("/");
+
     revalidatePath("/competitive-programming");
+
     revalidatePath("/admin/competitive");
+
     revalidatePath("/admin/media");
 }
+
+/*
+ * =============================================
+ * FORM VALIDATION
+ * =============================================
+ */
 
 function validatePlatform(formData: FormData) {
     return competitivePlatformSchema.safeParse({
         name: formData.get("name"),
+
         slug: formData.get("slug"),
+
         solvedCount: formData.get("solvedCount"),
+
         description: formData.get("description"),
     });
 }
@@ -69,16 +107,97 @@ function validatePlatform(formData: FormData) {
 function validateProblem(formData: FormData) {
     return competitiveProblemSchema.safeParse({
         title: formData.get("title"),
-        platform: formData.get("platform"),
+
+        platformMode: formData.get("platformMode"),
+
+        platform: formData.get("platform") ?? "",
+
+        newPlatformName: formData.get("newPlatformName") ?? "",
+
+        newPlatformDescription: formData.get("newPlatformDescription") ?? "",
+
+        newPlatformSolvedCount: formData.get("newPlatformSolvedCount"),
+
         problemLink: formData.get("problemLink"),
+
         language: formData.get("language"),
+
         codeScreenshot: formData.get("codeScreenshot") ?? "",
+
         solutionCode: formData.get("solutionCode") ?? "",
+
         explanation: formData.get("explanation") ?? "",
+
         solvedDate: formData.get("solvedDate"),
+
         tags: formData.get("tags") ?? "",
+
+        countedInTotal: formData.get("countedInTotal"),
     });
 }
+
+/*
+ * =============================================
+ * PLATFORM SLUG
+ * =============================================
+ */
+
+function slugifyPlatformName(value: string) {
+    const slug = value
+        .normalize("NFKD")
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9\s-]/g, "")
+        .replace(/\s+/g, "-")
+        .replace(/-+/g, "-")
+        .replace(/^-|-$/g, "");
+
+    return slug || "platform";
+}
+
+async function createUniquePlatformSlug(
+    supabase: ServerSupabaseClient,
+    platformName: string,
+) {
+    const base = slugifyPlatformName(platformName);
+
+    const { data, error } = await supabase
+        .from("competitive_platforms")
+        .select("slug")
+        .ilike("slug", `${base}%`);
+
+    if (error) {
+        console.error("Unable to check competitive platform slugs:", error);
+
+        throw new Error("Unable to prepare the new platform.");
+    }
+
+    const existingSlugs = new Set(
+        (
+            (data ?? []) as Array<{
+                slug: string;
+            }>
+        ).map((item) => item.slug),
+    );
+
+    if (!existingSlugs.has(base)) {
+        return base;
+    }
+
+    let suffix = 2;
+
+    while (existingSlugs.has(`${base}-${suffix}`)) {
+        suffix += 1;
+    }
+
+    return `${base}-${suffix}`;
+}
+
+/*
+ * =============================================
+ * MEDIA
+ * =============================================
+ */
 
 function isManagedCompetitivePath(path: string) {
     return path.startsWith("competitive/screenshots/");
@@ -115,6 +234,7 @@ async function removeManagedScreenshotBestEffort(
 
 export async function createCompetitivePlatform(
     _previousState: CompetitivePlatformActionState,
+
     formData: FormData,
 ): Promise<CompetitivePlatformActionState> {
     await requireAdmin();
@@ -124,6 +244,7 @@ export async function createCompetitivePlatform(
     if (!validated.success) {
         return {
             message: "Please correct the form errors.",
+
             errors: validated.error.flatten().fieldErrors,
         };
     }
@@ -134,8 +255,11 @@ export async function createCompetitivePlatform(
 
     const { error } = await supabase.from("competitive_platforms").insert({
         name: platform.name,
+
         slug: platform.slug,
+
         solved_count: platform.solvedCount,
+
         description: platform.description,
     });
 
@@ -166,7 +290,9 @@ export async function createCompetitivePlatform(
 
 export async function updateCompetitivePlatform(
     id: string,
+
     _previousState: CompetitivePlatformActionState,
+
     formData: FormData,
 ): Promise<CompetitivePlatformActionState> {
     await requireAdmin();
@@ -176,6 +302,7 @@ export async function updateCompetitivePlatform(
     if (!validated.success) {
         return {
             message: "Please correct the form errors.",
+
             errors: validated.error.flatten().fieldErrors,
         };
     }
@@ -184,7 +311,16 @@ export async function updateCompetitivePlatform(
 
     const supabase = await createClient();
 
-    const { data: existingPlatform, error: readError } = await supabase
+    /*
+     * Read the old platform name because problem rows
+     * currently store the human-readable platform name.
+     */
+
+    const {
+        data: existingPlatform,
+
+        error: readError,
+    } = await supabase
         .from("competitive_platforms")
         .select("name")
         .eq("id", id)
@@ -204,12 +340,22 @@ export async function updateCompetitivePlatform(
         };
     }
 
+    /*
+     * The manually entered solvedCount is authoritative.
+     *
+     * Future problems with countedInTotal = true will
+     * automatically add/subtract from this value.
+     */
+
     const { error } = await supabase
         .from("competitive_platforms")
         .update({
             name: platform.name,
+
             slug: platform.slug,
+
             solved_count: platform.solvedCount,
+
             description: platform.description,
         })
         .eq("id", id);
@@ -229,8 +375,11 @@ export async function updateCompetitivePlatform(
     }
 
     /*
-     * Problems currently store the platform name,
-     * so keep them synchronized after a rename.
+     * Platform rename.
+     *
+     * This does NOT change solved_count.
+     * It only synchronizes the label stored on
+     * existing problem rows.
      */
 
     if (existingPlatform.name !== platform.name) {
@@ -248,8 +397,8 @@ export async function updateCompetitivePlatform(
             );
 
             /*
-             * Restore the old platform name so
-             * the two tables do not remain inconsistent.
+             * Restore old name so we do not leave the
+             * platform/problem labels inconsistent.
              */
 
             await supabase
@@ -284,7 +433,11 @@ export async function deleteCompetitivePlatform(
 
     const supabase = await createClient();
 
-    const { data: platform, error: readError } = await supabase
+    const {
+        data: platform,
+
+        error: readError,
+    } = await supabase
         .from("competitive_platforms")
         .select("name")
         .eq("id", id)
@@ -298,6 +451,7 @@ export async function deleteCompetitivePlatform(
 
         return {
             success: false,
+
             error: "Unable to load the platform before deletion.",
         };
     }
@@ -305,14 +459,20 @@ export async function deleteCompetitivePlatform(
     if (!platform) {
         return {
             success: false,
+
             error: "The platform could not be found.",
         };
     }
 
-    const { count, error: countError } = await supabase
+    const {
+        count,
+
+        error: countError,
+    } = await supabase
         .from("competitive_problems")
         .select("id", {
             count: "exact",
+
             head: true,
         })
         .eq("platform", platform.name);
@@ -325,6 +485,7 @@ export async function deleteCompetitivePlatform(
 
         return {
             success: false,
+
             error: "Unable to verify whether this platform is in use.",
         };
     }
@@ -332,7 +493,8 @@ export async function deleteCompetitivePlatform(
     if ((count ?? 0) > 0) {
         return {
             success: false,
-            error: "This platform still has documented problems. Delete or move those problems first.",
+
+            error: "This platform still has saved solved problems. Delete or move those problems first.",
         };
     }
 
@@ -346,6 +508,7 @@ export async function deleteCompetitivePlatform(
 
         return {
             success: false,
+
             error: "Unable to delete the platform.",
         };
     }
@@ -359,12 +522,43 @@ export async function deleteCompetitivePlatform(
 
 /*
  * =============================================
+ * PROBLEM RPC ERROR
+ * =============================================
+ */
+
+function getProblemRpcErrorMessage(message: string) {
+    if (message.includes("PLATFORM_NOT_FOUND")) {
+        return "The selected platform could not be found.";
+    }
+
+    if (message.includes("PROBLEM_NOT_FOUND")) {
+        return "The solved problem could not be found.";
+    }
+
+    if (message.includes("NEW_PLATFORM_NAME_REQUIRED")) {
+        return "Enter a name for the new platform.";
+    }
+
+    if (message.includes("INVALID_PLATFORM_MODE")) {
+        return "Choose an existing platform or create a new one.";
+    }
+
+    if (message.includes("NOT_AUTHORIZED")) {
+        return "You are not authorized to perform this action.";
+    }
+
+    return "Unable to save the competitive programming problem.";
+}
+
+/*
+ * =============================================
  * PROBLEM - CREATE
  * =============================================
  */
 
 export async function createCompetitiveProblem(
     _previousState: CompetitiveProblemActionState,
+
     formData: FormData,
 ): Promise<CompetitiveProblemActionState> {
     await requireAdmin();
@@ -374,6 +568,7 @@ export async function createCompetitiveProblem(
     if (!validated.success) {
         return {
             message: "Please correct the form errors.",
+
             errors: validated.error.flatten().fieldErrors,
         };
     }
@@ -382,46 +577,78 @@ export async function createCompetitiveProblem(
 
     const supabase = await createClient();
 
-    const { data: platform, error: platformError } = await supabase
-        .from("competitive_platforms")
-        .select("id")
-        .eq("name", problem.platform)
-        .maybeSingle();
+    /*
+     * Slug is generated automatically for inline
+     * platform creation.
+     */
 
-    if (platformError) {
-        console.error("Problem platform validation error:", platformError);
+    let newPlatformSlug = "";
 
-        return {
-            message: "Unable to verify the selected platform.",
-        };
+    if (problem.platformMode === "new") {
+        try {
+            newPlatformSlug = await createUniquePlatformSlug(
+                supabase,
+
+                problem.newPlatformName,
+            );
+        } catch (slugError) {
+            console.error(slugError);
+
+            return {
+                message: "Unable to prepare the new platform.",
+            };
+        }
     }
 
-    if (!platform) {
-        return {
-            message: "Select an existing competitive programming platform.",
-            errors: {
-                platform: ["The selected platform does not exist."],
-            },
-        };
-    }
+    /*
+     * This RPC performs platform creation,
+     * problem creation and solved-count increment
+     * inside ONE database transaction.
+     */
 
-    const { error } = await supabase.from("competitive_problems").insert({
-        title: problem.title,
-        platform: problem.platform,
-        problem_link: problem.problemLink,
-        language: problem.language,
-        code_screenshot: problem.codeScreenshot || "",
-        solution_code: problem.solutionCode || "",
-        explanation: problem.explanation || "",
-        solved_date: problem.solvedDate,
-        tags: problem.tags,
-    });
+    const { error } = await supabase.rpc(
+        "create_competitive_problem_with_sync",
+        {
+            p_title: problem.title,
+
+            p_platform_mode: problem.platformMode,
+
+            p_existing_platform: problem.platform || "",
+
+            p_new_platform_name: problem.newPlatformName || "",
+
+            p_new_platform_slug: newPlatformSlug,
+
+            p_new_platform_description: problem.newPlatformDescription || "",
+
+            p_new_platform_solved_count: problem.newPlatformSolvedCount ?? 0,
+
+            p_problem_link: problem.problemLink,
+
+            p_language: problem.language,
+
+            p_code_screenshot: problem.codeScreenshot || "",
+
+            p_solution_code: problem.solutionCode || "",
+
+            p_explanation: problem.explanation || "",
+
+            p_solved_date: problem.solvedDate,
+
+            p_tags: problem.tags,
+
+            p_counted_in_total: problem.countedInTotal,
+        },
+    );
 
     if (error) {
-        console.error("Create competitive problem error:", error);
+        console.error(
+            "Create competitive problem with auto-sync error:",
+            error,
+        );
 
         return {
-            message: "Unable to create the competitive programming problem.",
+            message: getProblemRpcErrorMessage(error.message),
         };
     }
 
@@ -438,7 +665,9 @@ export async function createCompetitiveProblem(
 
 export async function updateCompetitiveProblem(
     id: string,
+
     _previousState: CompetitiveProblemActionState,
+
     formData: FormData,
 ): Promise<CompetitiveProblemActionState> {
     await requireAdmin();
@@ -448,6 +677,7 @@ export async function updateCompetitiveProblem(
     if (!validated.success) {
         return {
             message: "Please correct the form errors.",
+
             errors: validated.error.flatten().fieldErrors,
         };
     }
@@ -456,12 +686,20 @@ export async function updateCompetitiveProblem(
 
     const supabase = await createClient();
 
-    const { data: existingProblem, error: existingProblemError } =
-        await supabase
-            .from("competitive_problems")
-            .select("code_screenshot")
-            .eq("id", id)
-            .maybeSingle();
+    /*
+     * Keep old screenshot until the database update
+     * has succeeded.
+     */
+
+    const {
+        data: existingProblem,
+
+        error: existingProblemError,
+    } = await supabase
+        .from("competitive_problems")
+        .select("code_screenshot")
+        .eq("id", id)
+        .maybeSingle();
 
     if (existingProblemError) {
         console.error(
@@ -476,59 +714,91 @@ export async function updateCompetitiveProblem(
 
     if (!existingProblem) {
         return {
-            message: "The competitive programming problem could not be found.",
+            message: "The solved problem could not be found.",
         };
     }
 
-    const { data: platform, error: platformError } = await supabase
-        .from("competitive_platforms")
-        .select("id")
-        .eq("name", problem.platform)
-        .maybeSingle();
+    let newPlatformSlug = "";
 
-    if (platformError) {
-        console.error("Problem platform validation error:", platformError);
+    if (problem.platformMode === "new") {
+        try {
+            newPlatformSlug = await createUniquePlatformSlug(
+                supabase,
 
-        return {
-            message: "Unable to verify the selected platform.",
-        };
+                problem.newPlatformName,
+            );
+        } catch (slugError) {
+            console.error(slugError);
+
+            return {
+                message: "Unable to prepare the new platform.",
+            };
+        }
     }
 
-    if (!platform) {
-        return {
-            message: "Select an existing competitive programming platform.",
-            errors: {
-                platform: ["The selected platform does not exist."],
-            },
-        };
-    }
+    /*
+     * Database RPC automatically handles:
+     *
+     * counted true  → true
+     * counted true  → false
+     * counted false → true
+     * platform move
+     * new platform
+     *
+     * including correct +1 / -1 adjustments.
+     */
 
-    const { error } = await supabase
-        .from("competitive_problems")
-        .update({
-            title: problem.title,
-            platform: problem.platform,
-            problem_link: problem.problemLink,
-            language: problem.language,
-            code_screenshot: problem.codeScreenshot || "",
-            solution_code: problem.solutionCode || "",
-            explanation: problem.explanation || "",
-            solved_date: problem.solvedDate,
-            tags: problem.tags,
-        })
-        .eq("id", id);
+    const { error } = await supabase.rpc(
+        "update_competitive_problem_with_sync",
+        {
+            p_problem_id: id,
+
+            p_title: problem.title,
+
+            p_platform_mode: problem.platformMode,
+
+            p_existing_platform: problem.platform || "",
+
+            p_new_platform_name: problem.newPlatformName || "",
+
+            p_new_platform_slug: newPlatformSlug,
+
+            p_new_platform_description: problem.newPlatformDescription || "",
+
+            p_new_platform_solved_count: problem.newPlatformSolvedCount ?? 0,
+
+            p_problem_link: problem.problemLink,
+
+            p_language: problem.language,
+
+            p_code_screenshot: problem.codeScreenshot || "",
+
+            p_solution_code: problem.solutionCode || "",
+
+            p_explanation: problem.explanation || "",
+
+            p_solved_date: problem.solvedDate,
+
+            p_tags: problem.tags,
+
+            p_counted_in_total: problem.countedInTotal,
+        },
+    );
 
     if (error) {
-        console.error("Update competitive problem error:", error);
+        console.error(
+            "Update competitive problem with auto-sync error:",
+            error,
+        );
 
         return {
-            message: "Unable to update the competitive programming problem.",
+            message: getProblemRpcErrorMessage(error.message),
         };
     }
 
     /*
-     * Database update succeeded.
-     * It is now safe to remove the old screenshot.
+     * Database succeeded.
+     * Now it is safe to remove the old screenshot.
      */
 
     if (
@@ -537,6 +807,7 @@ export async function updateCompetitiveProblem(
     ) {
         await removeManagedScreenshotBestEffort(
             supabase,
+
             existingProblem.code_screenshot,
         );
     }
@@ -559,7 +830,15 @@ export async function deleteCompetitiveProblem(
 
     const supabase = await createClient();
 
-    const { data: existingProblem, error: readError } = await supabase
+    /*
+     * Read screenshot before deleting the DB row.
+     */
+
+    const {
+        data: existingProblem,
+
+        error: readError,
+    } = await supabase
         .from("competitive_problems")
         .select("code_screenshot")
         .eq("id", id)
@@ -573,6 +852,7 @@ export async function deleteCompetitiveProblem(
 
         return {
             success: false,
+
             error: "Unable to load the problem before deletion.",
         };
     }
@@ -580,27 +860,44 @@ export async function deleteCompetitiveProblem(
     if (!existingProblem) {
         return {
             success: false,
-            error: "The competitive programming problem could not be found.",
+
+            error: "The solved problem could not be found.",
         };
     }
 
-    const { error } = await supabase
-        .from("competitive_problems")
-        .delete()
-        .eq("id", id);
+    /*
+     * RPC removes the problem AND decrements
+     * the platform only when counted_in_total = true.
+     */
+
+    const { error } = await supabase.rpc(
+        "delete_competitive_problem_with_sync",
+        {
+            p_problem_id: id,
+        },
+    );
 
     if (error) {
-        console.error("Delete competitive problem error:", error);
+        console.error(
+            "Delete competitive problem with auto-sync error:",
+            error,
+        );
 
         return {
             success: false,
-            error: "Unable to delete the competitive programming problem.",
+
+            error: getProblemRpcErrorMessage(error.message),
         };
     }
+
+    /*
+     * Best-effort storage cleanup.
+     */
 
     if (existingProblem.code_screenshot) {
         await removeManagedScreenshotBestEffort(
             supabase,
+
             existingProblem.code_screenshot,
         );
     }

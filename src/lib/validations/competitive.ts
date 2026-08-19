@@ -1,13 +1,40 @@
 import { z } from "zod";
 
+/*
+ * =============================================
+ * COMMON HELPERS
+ * =============================================
+ */
+
+const checkboxSchema = z.preprocess((value) => {
+    return (
+        value === true || value === "true" || value === "on" || value === "1"
+    );
+}, z.boolean());
+
 const requiredNumber = (schema: z.ZodNumber) =>
     z.preprocess((value) => {
-        if (value === null || value === "") {
+        if (value === null || value === undefined || value === "") {
             return undefined;
         }
 
-        return value;
+        return Number(value);
     }, schema);
+
+const optionalNumber = (schema: z.ZodNumber) =>
+    z.preprocess((value) => {
+        if (value === null || value === undefined || value === "") {
+            return undefined;
+        }
+
+        return Number(value);
+    }, schema.optional());
+
+/*
+ * =============================================
+ * URL VALIDATION
+ * =============================================
+ */
 
 const httpUrl = z
     .string()
@@ -39,6 +66,10 @@ const optionalScreenshotUrl = z
                 return true;
             }
 
+            /*
+             * Allow local public assets.
+             */
+
             if (value.startsWith("/") && !value.startsWith("//")) {
                 return true;
             }
@@ -47,6 +78,11 @@ const optionalScreenshotUrl = z
                 /\/$/,
                 "",
             );
+
+            /*
+             * Allow the managed Competitive
+             * Programming screenshot folder.
+             */
 
             if (
                 supabaseUrl &&
@@ -70,6 +106,12 @@ const optionalScreenshotUrl = z
         },
     );
 
+/*
+ * =============================================
+ * TAGS
+ * =============================================
+ */
+
 const tagsSchema = z
     .string()
     .transform((value) =>
@@ -79,6 +121,12 @@ const tagsSchema = z
             .filter(Boolean),
     )
     .pipe(z.array(z.string().min(1).max(80)).max(30, "Too many tags."));
+
+/*
+ * =============================================
+ * PLATFORM
+ * =============================================
+ */
 
 export const competitivePlatformSchema = z.object({
     name: z
@@ -98,8 +146,8 @@ export const competitivePlatformSchema = z.object({
         ),
 
     solvedCount: requiredNumber(
-        z.coerce
-            .number<number>()
+        z
+            .number()
             .int("Solved count must be a whole number.")
             .min(0, "Solved count cannot be negative.")
             .max(1000000, "Solved count is too large."),
@@ -112,41 +160,143 @@ export const competitivePlatformSchema = z.object({
         .max(1000, "Description is too long."),
 });
 
-export const competitiveProblemSchema = z.object({
-    title: z
-        .string()
-        .trim()
-        .min(1, "Problem title is required.")
-        .max(200, "Problem title is too long."),
+/*
+ * =============================================
+ * PROBLEM
+ * =============================================
+ */
 
-    platform: z
-        .string()
-        .trim()
-        .min(1, "Platform is required.")
-        .max(100, "Platform name is too long."),
+export const competitiveProblemSchema = z
+    .object({
+        title: z
+            .string()
+            .trim()
+            .min(1, "Problem title is required.")
+            .max(200, "Problem title is too long."),
 
-    problemLink: httpUrl,
+        /*
+         * existing = use an existing platform.
+         * new      = create/reuse a new platform.
+         */
+        platformMode: z.enum(["existing", "new"], {
+            message: "Choose a platform option.",
+        }),
 
-    language: z
-        .string()
-        .trim()
-        .min(1, "Programming language is required.")
-        .max(80, "Programming language is too long."),
+        /*
+         * Used when platformMode = existing.
+         */
+        platform: z.string().trim().max(100, "Platform name is too long."),
 
-    codeScreenshot: optionalScreenshotUrl,
+        /*
+         * Used when platformMode = new.
+         */
+        newPlatformName: z
+            .string()
+            .trim()
+            .max(100, "Platform name is too long."),
 
-    solutionCode: z.string().max(30000, "Solution code is too long."),
+        newPlatformDescription: z
+            .string()
+            .trim()
+            .max(1000, "Platform description is too long."),
 
-    explanation: z.string().trim().max(10000, "Explanation is too long."),
+        /*
+         * IMPORTANT:
+         *
+         * This should be the number of problems
+         * already solved on the newly created platform
+         * BEFORE counting the current problem.
+         *
+         * Example:
+         *
+         * You already solved 20 AtCoder problems and
+         * this form represents problem #21:
+         *
+         * existing solved count = 20
+         * countedInTotal = true
+         *
+         * Final total becomes 21.
+         */
+        newPlatformSolvedCount: optionalNumber(
+            z
+                .number()
+                .int("Solved count must be a whole number.")
+                .min(0, "Solved count cannot be negative.")
+                .max(1000000, "Solved count is too large."),
+        ),
 
-    solvedDate: z
-        .string()
-        .trim()
-        .min(1, "Solved date is required.")
-        .regex(/^\d{4}-\d{2}-\d{2}$/, "Use a valid date."),
+        problemLink: httpUrl,
 
-    tags: tagsSchema,
-});
+        language: z
+            .string()
+            .trim()
+            .min(1, "Programming language is required.")
+            .max(80, "Programming language is too long."),
+
+        codeScreenshot: optionalScreenshotUrl,
+
+        solutionCode: z.string().max(30000, "Solution code is too long."),
+
+        explanation: z.string().trim().max(10000, "Explanation is too long."),
+
+        solvedDate: z
+            .string()
+            .trim()
+            .min(1, "Solved date is required.")
+            .regex(/^\d{4}-\d{2}-\d{2}$/, "Use a valid date."),
+
+        tags: tagsSchema,
+
+        /*
+         * Controls automatic solved-count syncing.
+         */
+        countedInTotal: checkboxSchema,
+    })
+
+    /*
+     * =============================================
+     * CONDITIONAL PLATFORM VALIDATION
+     * =============================================
+     */
+    .superRefine((data, context) => {
+        if (data.platformMode === "existing") {
+            if (!data.platform) {
+                context.addIssue({
+                    code: "custom",
+
+                    path: ["platform"],
+
+                    message: "Select an existing platform.",
+                });
+            }
+
+            return;
+        }
+
+        /*
+         * New platform mode.
+         */
+
+        if (!data.newPlatformName) {
+            context.addIssue({
+                code: "custom",
+
+                path: ["newPlatformName"],
+
+                message: "New platform name is required.",
+            });
+        }
+
+        if (data.newPlatformDescription.length < 5) {
+            context.addIssue({
+                code: "custom",
+
+                path: ["newPlatformDescription"],
+
+                message: "Platform description is required.",
+            });
+        }
+    });
 
 export type CompetitivePlatformInput = z.infer<
     typeof competitivePlatformSchema

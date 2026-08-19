@@ -6,28 +6,57 @@ import { requireAdmin } from "@/lib/auth/require-admin";
 import { createPublicClient } from "@/lib/supabase/public";
 import { createClient } from "@/lib/supabase/server";
 
+/*
+ * =============================================
+ * DATABASE ROW TYPES
+ * =============================================
+ */
+
 type CompetitivePlatformRow = {
     id: string;
+
     name: string;
+
     solved_count: number;
+
     description: string;
+
     slug: string;
+
     created_at: string;
 };
 
 type CompetitiveProblemRow = {
     id: string;
+
     title: string;
+
     platform: string;
+
     problem_link: string | null;
+
     language: string;
+
     code_screenshot: string | null;
+
     solution_code: string | null;
+
     explanation: string | null;
+
     solved_date: string;
+
     tags: string[] | null;
+
+    counted_in_total: boolean;
+
     created_at: string;
 };
+
+/*
+ * =============================================
+ * SELECTS
+ * =============================================
+ */
 
 const competitivePlatformSelect = `
     id,
@@ -49,18 +78,30 @@ const competitiveProblemSelect = `
     explanation,
     solved_date,
     tags,
+    counted_in_total,
     created_at
 `;
+
+/*
+ * =============================================
+ * MAPPERS
+ * =============================================
+ */
 
 function mapCompetitivePlatform(
     row: CompetitivePlatformRow,
 ): CompetitivePlatform {
     return {
         id: row.id,
+
         name: row.name,
+
         solved_count: row.solved_count,
+
         description: row.description,
+
         slug: row.slug,
+
         created_at: row.created_at,
     };
 }
@@ -68,22 +109,34 @@ function mapCompetitivePlatform(
 function mapCompetitiveProblem(row: CompetitiveProblemRow): CompetitiveProblem {
     return {
         id: row.id,
+
         title: row.title,
+
         platform: row.platform,
+
         problem_link: row.problem_link ?? "",
+
         language: row.language,
+
         code_screenshot: row.code_screenshot ?? "",
+
         solution_code: row.solution_code ?? "",
+
         explanation: row.explanation ?? "",
+
         solved_date: row.solved_date,
+
         tags: row.tags ?? [],
+
+        counted_in_total: row.counted_in_total,
+
         created_at: row.created_at,
     };
 }
 
 /*
  * =============================================
- * PUBLIC
+ * PUBLIC PLATFORMS
  * =============================================
  */
 
@@ -110,6 +163,12 @@ export async function getCompetitivePlatforms(): Promise<
     );
 }
 
+/*
+ * =============================================
+ * PUBLIC PROBLEMS
+ * =============================================
+ */
+
 export async function getCompetitiveProblems(): Promise<CompetitiveProblem[]> {
     const supabase = createPublicClient();
 
@@ -134,7 +193,7 @@ export async function getCompetitiveProblems(): Promise<CompetitiveProblem[]> {
 
 /*
  * =============================================
- * ADMIN PLATFORM LIST
+ * ADMIN PLATFORMS
  * =============================================
  */
 
@@ -193,7 +252,7 @@ export async function getCompetitivePlatformByIdForAdmin(
 
 /*
  * =============================================
- * ADMIN PROBLEM LIST
+ * ADMIN PROBLEMS
  * =============================================
  */
 
