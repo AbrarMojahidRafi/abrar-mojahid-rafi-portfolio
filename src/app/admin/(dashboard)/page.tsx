@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import {
     ArrowUpRight,
     CheckCircle2,
@@ -179,13 +181,13 @@ export default function AdminDashboardPage() {
 
                     <p
                         className="
-                            mt-3
-                            max-w-2xl
-                            leading-7
-                            text-gray-400
-                        ">
-                        Each module will be activated as its database, forms and
-                        management tools are implemented.
+                                mt-3
+                                max-w-2xl
+                                leading-7
+                                text-gray-400
+                            ">
+                        Choose a module to manage your portfolio content,
+                        messages, media and website configuration.
                     </p>
                 </div>
             </div>
@@ -194,84 +196,74 @@ export default function AdminDashboardPage() {
 
             <div
                 className="
-                    mt-8
-                    grid
-                    gap-5
-                    sm:grid-cols-2
-                    xl:grid-cols-3
-                ">
+        mt-8
+        grid
+        gap-5
+        sm:grid-cols-2
+        xl:grid-cols-3
+    ">
                 {modules.map((module) => {
                     const Icon = module.icon;
 
-                    return (
-                        <article
-                            key={module.href}
-                            className="
-                                    group
-                                    relative
-                                    overflow-hidden
-                                    rounded-3xl
-                                    border
-                                    border-white/10
-                                    bg-white/[0.025]
-                                    p-6
-                                    transition
-                                    hover:border-white/15
-                                    hover:bg-white/[0.035]
-                                ">
+                    const content = (
+                        <>
                             <div
                                 className="
-                                        flex
-                                        items-start
-                                        justify-between
-                                        gap-4
-                                    ">
+                        flex
+                        items-start
+                        justify-between
+                        gap-4
+                    ">
                                 <div
                                     className="
-                                            flex
-                                            h-11
-                                            w-11
-                                            items-center
-                                            justify-center
-                                            rounded-2xl
-                                            bg-cyan-400/10
-                                            text-cyan-400
-                                        ">
+                            flex
+                            h-11
+                            w-11
+                            items-center
+                            justify-center
+                            rounded-2xl
+                            bg-cyan-400/10
+                            text-cyan-400
+                            transition
+                            duration-300
+                            group-hover:bg-cyan-400/15
+                            group-hover:shadow-[0_0_25px_rgba(34,211,238,0.10)]
+                        ">
                                     <Icon size={21} />
                                 </div>
 
                                 {module.available ? (
                                     <span
                                         className="
-                                                rounded-full
-                                                border
-                                                border-emerald-400/20
-                                                bg-emerald-400/[0.06]
-                                                px-3
-                                                py-1
-                                                text-[10px]
-                                                uppercase
-                                                tracking-wider
-                                                text-emerald-300
-                                            ">
+                                rounded-full
+                                border
+                                border-emerald-400/20
+                                bg-emerald-400/[0.06]
+                                px-3
+                                py-1
+                                text-[10px]
+                                uppercase
+                                tracking-wider
+                                text-emerald-300
+                            ">
                                         Ready
                                     </span>
                                 ) : (
                                     <span
                                         className="
-                                                inline-flex
-                                                items-center
-                                                gap-1.5
-                                                rounded-full
-                                                border
-                                                border-white/10
-                                                px-3
-                                                py-1
-                                                text-[10px]
-                                                uppercase
-                                                tracking-wider
-                                                text-gray-500
-                                            ">
+                                inline-flex
+                                items-center
+                                gap-1.5
+                                rounded-full
+                                border
+                                border-white/10
+                                px-3
+                                py-1
+                                text-[10px]
+                                uppercase
+                                tracking-wider
+                                text-gray-500
+                            ">
                                         <Clock3 size={11} />
                                         Planned
                                     </span>
@@ -280,44 +272,115 @@ export default function AdminDashboardPage() {
 
                             <h3
                                 className="
-                                        mt-6
-                                        text-xl
-                                        font-semibold
-                                        text-white
-                                    ">
+                        mt-6
+                        text-xl
+                        font-semibold
+                        text-white
+                        transition-colors
+                        duration-300
+                        group-hover:text-cyan-300
+                    ">
                                 {module.label}
                             </h3>
 
                             <p
                                 className="
-                                        mt-3
-                                        min-h-[52px]
-                                        text-sm
-                                        leading-6
-                                        text-gray-500
-                                    ">
+                        mt-3
+                        min-h-[52px]
+                        text-sm
+                        leading-6
+                        text-gray-500
+                    ">
                                 {module.description}
                             </p>
 
                             <div
-                                className="
-                                        mt-6
-                                        flex
-                                        items-center
-                                        gap-2
-                                        text-xs
-                                        text-gray-600
-                                    ">
+                                className={`
+                        mt-6
+                        flex
+                        items-center
+                        gap-2
+                        text-xs
+                        transition-all
+                        duration-300
+
+                        ${
+                            module.available
+                                ? "text-gray-500 group-hover:gap-3 group-hover:text-cyan-400"
+                                : "text-gray-600"
+                        }
+                    `}>
                                 {module.available ? (
                                     <>
                                         Open module
-                                        <ArrowUpRight size={14} />
+                                        <ArrowUpRight
+                                            size={14}
+                                            className="
+                                    transition-transform
+                                    duration-300
+                                    group-hover:-translate-y-0.5
+                                    group-hover:translate-x-0.5
+                                "
+                                        />
                                     </>
                                 ) : (
                                     <>Implementation pending</>
                                 )}
                             </div>
-                        </article>
+                        </>
+                    );
+
+                    if (!module.available) {
+                        return (
+                            <article
+                                key={module.href}
+                                className="
+                        relative
+                        overflow-hidden
+                        rounded-3xl
+                        border
+                        border-white/10
+                        bg-white/[0.025]
+                        p-6
+                        opacity-70
+                    ">
+                                {content}
+                            </article>
+                        );
+                    }
+
+                    return (
+                        <Link
+                            key={module.href}
+                            href={module.href}
+                            aria-label={`Open ${module.label} module`}
+                            className="
+                    group
+                    relative
+                    block
+                    overflow-hidden
+                    rounded-3xl
+                    border
+                    border-white/10
+                    bg-white/[0.025]
+                    p-6
+                    outline-none
+                    transition-all
+                    duration-300
+
+                    hover:-translate-y-1
+                    hover:border-cyan-400/25
+                    hover:bg-white/[0.04]
+                    hover:shadow-[0_18px_50px_rgba(0,0,0,0.18)]
+
+                    focus-visible:border-cyan-400/50
+                    focus-visible:ring-2
+                    focus-visible:ring-cyan-400/20
+
+                    active:translate-y-0
+                ">
+                            {content}
+                        </Link>
                     );
                 })}
             </div>
