@@ -27,6 +27,11 @@ const navigation = [
     },
 
     {
+        label: "Competitive Programming",
+        href: "/competitive-programming",
+    },
+
+    {
         label: "Research",
         href: "/research",
     },

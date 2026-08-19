@@ -32,6 +32,10 @@ export const MEDIA_LIBRARY_FOLDERS = [
         label: "Research",
     },
     {
+        path: "competitive/screenshots",
+        label: "Competitive Programming",
+    },
+    {
         path: MEDIA_LIBRARY_SHARED_IMAGE_FOLDER,
         label: "Shared Images",
     },

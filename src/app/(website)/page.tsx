@@ -6,6 +6,8 @@ import ExperiencePreview from "@/components/sections/ExperiencePreview";
 import LatestBlog from "@/components/sections/LatestBlog";
 import ContactCTA from "@/components/sections/ContactCTA";
 
+import CompetitiveSection from "@/components/competitive/CompetitiveSection";
+
 import { getPublicProfile } from "@/lib/queries/profile";
 
 export default async function Home() {
@@ -16,6 +18,8 @@ export default async function Home() {
             <Hero profile={profile} />
 
             <FeaturedProjects />
+
+            <CompetitiveSection />
 
             <ResearchHighlights />
 

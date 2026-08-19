@@ -29,6 +29,11 @@ const links = [
     },
 
     {
+        label: "Competitive",
+        href: "/competitive-programming",
+    },
+
+    {
         label: "Research",
         href: "/research",
     },

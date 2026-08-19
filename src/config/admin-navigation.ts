@@ -10,6 +10,7 @@ import {
     Share2,
     UserRound,
     Wrench,
+    Code2,
 } from "lucide-react";
 
 export const adminNavigationGroups = [
@@ -55,6 +56,18 @@ export const adminNavigationGroups = [
                 icon: FolderKanban,
 
                 description: "Create and manage portfolio projects.",
+
+                available: true,
+            },
+            {
+                label: "Competitive Programming",
+
+                href: "/admin/competitive",
+
+                icon: Code2,
+
+                description:
+                    "Manage solved programming problems and coding challenges.",
 
                 available: true,
             },
